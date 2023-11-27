@@ -1,0 +1,41 @@
+---
+title: "Analysis of Alcohol Admissions Deprivation Data"
+subtitle: "PU5058
+author: "Victoria A"
+date: "26/11/2023"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load packages
+```{r load-packages, include=FALSE}
+library(tidyverse)
+library(here)
+library(ggplot2)
+```
+## Read in data
+```{r read-data}
+# alcohol-related hospital admissions by health board
+admissions_data <- read_csv(here("01_Input/alcohol_related_admissions.csv")) 
+deprivation_data <- read_csv(here("01_Input/alcohol-admissions_deprivation-data.csv")) 
+head(admissions_data)
+head(deprivation_data)
+```
+## Exercise 1: For the alcohol-related hospital admission data per intermediate data zone (the data we used in the previous section), plot the data distributions for each health board in 2019.
+```{r}
+hb_admissions_data <- admissions_data %>% filter(year==2019)
+
+hb_admissions_data %>%
+  ggplot(aes(x=alcohol_admissions, fill=health_board,position = "dodge")) +
+  geom_histogram(binwidth = 10) +
+  labs(x = "Alcohol Admissions") +
+  facet_wrap(~ health_board)
+
+```
+## Exercise 2: For which health boards do we have data on alcohol-related hospital admissions for each deprivation quintile?
+```{r}
+glimpse(deprivation_data)
+```
+
