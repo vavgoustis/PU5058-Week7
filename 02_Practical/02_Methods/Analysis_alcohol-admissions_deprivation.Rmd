@@ -21,7 +21,6 @@ library(ggplot2)
 admissions_data <- read_csv(here("01_Input/alcohol_related_admissions.csv")) 
 deprivation_data <- read_csv(here("01_Input/alcohol-admissions_deprivation-data.csv")) 
 head(admissions_data)
-head(deprivation_data)
 ```
 ## Exercise 1: For the alcohol-related hospital admission data per intermediate data zone (the data we used in the previous section), plot the data distributions for each health board in 2019.
 ```{r}
@@ -36,6 +35,34 @@ hb_admissions_data %>%
 ```
 ## Exercise 2: For which health boards do we have data on alcohol-related hospital admissions for each deprivation quintile?
 ```{r}
-glimpse(deprivation_data)
+# S08000020 = NHS Grampian
+# S08000029 = NHS Fife
+unique(deprivation_data$geography_code)
+```
+```{r}
+deprivation_data
+```
+
+
+```{r}
+deprivation_data <- deprivation_data %>%
+  mutate(quintile = factor(quintile, levels = c(unique(quintile)))) %>%
+  mutate(geography_code= factor(geography_code, levels = c(unique(geography_code)))) %>%
+  rename(sd_alcohol_admission_rate = indicator_measure)
+
+levels(deprivation_data$geography_code) <- gsub("S08000020", "Grampian", levels(deprivation_data$geography_code)) # Health Board Name
+levels(deprivation_data$geography_code) <- gsub("S08000029", "Fife", levels(deprivation_data$geography_code)) # Health Board Name
+
+deprivation_data
+```
+```{r}
+deprivation_data %>%
+  ggplot(aes(x=quintile, y=sd_alcohol_admission_rate, fill=quintile)) + 
+  facet_wrap(~ geography_code) +
+  geom_boxplot()+
+  labs(
+    title="Alcohol-related admissions",
+    y = "Age-sex standardised rate per 100,000" ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
