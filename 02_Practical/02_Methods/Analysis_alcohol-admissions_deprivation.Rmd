@@ -1,9 +1,13 @@
 ---
 title: "Analysis of Alcohol Admissions Deprivation Data"
-subtitle: "PU5058
+subtitle: "PU5058"
 author: "Victoria A"
 date: "26/11/2023"
-output: html_document
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -31,18 +35,17 @@ hb_admissions_data %>%
   geom_histogram(binwidth = 10) +
   labs(x = "Alcohol Admissions") +
   facet_wrap(~ health_board)
-
 ```
+
+
 ## Exercise 2: For which health boards do we have data on alcohol-related hospital admissions for each deprivation quintile?
+
 ```{r}
 # S08000020 = NHS Grampian
 # S08000029 = NHS Fife
 unique(deprivation_data$geography_code)
 ```
-```{r}
-deprivation_data
-```
-
+## Exercise 3: Create boxplots showing alcohol admissions for each deprivation quintile. Create a different plot for each health board in the data set. 
 
 ```{r}
 deprivation_data <- deprivation_data %>%
