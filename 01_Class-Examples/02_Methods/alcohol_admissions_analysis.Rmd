@@ -13,33 +13,38 @@ knitr::opts_chunk$set(echo = TRUE)
 
 We just need the tidyverse package.
 
-```{r load-packages}
+```{r load-packages, include=FALSE}
 library(tidyverse)
+library(here)
 ```
 
 ## Read in data
+
 Our data is saved in csv files, so we will use the read_csv function.
 
 ```{r read-data}
 # alcohol-related hospital admissions
-data <- read_csv("scotpho_data_extract.csv") 
+data <- read_csv(here("01_Input/scotpho_data_extract.csv")) 
 
 # intermediate data zone info
-intermediate_zone_codes <- read_csv("iz2011_codes_and_labels_21042020.csv") 
+intermediate_zone_codes <- read_csv(here("01_Input/iz2011_codes_and_labels_21042020.csv")) 
 
 ```
 
-
 ## Prepare data
-The data in these open datasets is already clean, so we don't need to worry about missing or wrong values. It is also tidy. 
-We will only select the data we want: data from intermediate zones, and a subset of the variables from each dataset.
+
+The data in these open datasets is already clean, so we don't need to worry about missing or wrong values. It is also tidy. We will only select the data we want: data from intermediate zones, and a subset of the variables from each dataset.
 
 ```{r}
 glimpse(data)
 
+#head(data)
+
 iz_data <- data %>%
   filter(area_type == "Intermediate zone") %>%
   select(area_name,area_code,year,measure)
+
+#head(intermediate_zone_codes)
 
 glimpse(intermediate_zone_codes)
 
@@ -49,8 +54,8 @@ iz_info <- intermediate_zone_codes %>%
 ```
 
 ## Join the datasets
-Let's join the two datasets, so we know which health board each data zone belongs to.
-We will also remove "NHS" from the health board name, and rename a couple of the columns.
+
+Let's join the two datasets, so we know which health board each data zone belongs to. We will also remove "NHS" from the health board name, and rename a couple of the columns.
 
 ```{r join-datasets}
 admission_data <- left_join(iz_data,iz_info, by = c("area_code" = "IntZone"))
@@ -66,10 +71,11 @@ glimpse(admission_data)
 ```
 
 ## Save dataframe
+
 To save the dataframe to a CSV file, we use the write_csv function.
 
 ```{r save-data}
-write_csv(admission_data,"alcohol_related_admissions.csv")
+admission_data %>% write_csv(here("03_Output/alcohol_related_admissions.csv"))
 
 ```
 
@@ -108,12 +114,14 @@ grampian_fife_data %>%
 ```
 
 ## Statistical comparison
+
 Non-parametric test
 
 ```{r wilcox-test}
 wilcox.test(alcohol_admissions ~ health_board, data = grampian_fife_data)
 
 ```
+
 ```{r kruskal-test}
 # non-parametric test for comparing more than two groups
 admission_data %>% 
@@ -144,5 +152,3 @@ Grampian2019 %>%
 
 
 ```
-
-
